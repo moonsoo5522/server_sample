@@ -1,0 +1,7 @@
+version: "1.0"
+services:
+  async_study:
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile
+    networks: bridge
