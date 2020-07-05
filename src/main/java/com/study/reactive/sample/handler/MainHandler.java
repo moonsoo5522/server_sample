@@ -6,6 +6,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -41,9 +43,13 @@ public class MainHandler {
 
 
     public Mono<ServerResponse> hello(ServerRequest request) {
-        //Mono<Code> code = codeRepository.getCode(request.queryParam("code").orElse(null));
-        //return ServerResponse.ok().body(request(code), String.class);
-        throw new RuntimeException();
+        Mono<Code> code = codeRepository.getCode(request.queryParam("code").orElse(null))
+                .onErrorResume(e -> Mono.just(Code.builder()
+                        .code("code")
+                        .name("slow")
+                        .build())
+                );
+        return ServerResponse.ok().body(request(code), String.class);
     }
 
     public Mono<String> request(Mono<Code> code) {

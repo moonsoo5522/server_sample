@@ -37,7 +37,7 @@ public class MysqlDBConnectorImpl implements DBConnector {
     @Override
     public Mono<Connection> pool() {
         // return Mono.create()
-        return Mono.just(queue).map((q) -> q.peek()).subscribeOn(scheduler).doOnSuccess(conn -> queue.add(conn));
+        return Mono.just(queue).map(Queue::peek).subscribeOn(scheduler).doOnSuccess(conn -> queue.add(conn));
 
     }
 }

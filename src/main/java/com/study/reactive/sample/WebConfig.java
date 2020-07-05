@@ -59,7 +59,7 @@ public class WebConfig extends DelegatingWebFluxConfiguration {
         return webClientBuilder -> webClientBuilder.build();
     }
 
-    @Bean
+    //@Bean
     public MysqlDBConnectorImpl mysqlDBConnector() {
         ConnectionFactoryOptions options = ConnectionFactoryOptions.builder()
                 .option(DRIVER, "mysql")
