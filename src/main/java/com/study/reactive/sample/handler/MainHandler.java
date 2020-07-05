@@ -41,8 +41,9 @@ public class MainHandler {
 
 
     public Mono<ServerResponse> hello(ServerRequest request) {
-        Mono<Code> code = codeRepository.getCode(request.queryParam("code").orElse(null));
-        return ServerResponse.ok().body(request(code), String.class);
+        //Mono<Code> code = codeRepository.getCode(request.queryParam("code").orElse(null));
+        //return ServerResponse.ok().body(request(code), String.class);
+        throw new RuntimeException();
     }
 
     public Mono<String> request(Mono<Code> code) {

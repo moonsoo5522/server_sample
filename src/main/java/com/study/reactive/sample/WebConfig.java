@@ -50,7 +50,7 @@ public class WebConfig extends DelegatingWebFluxConfiguration {
     public RouterFunction<?> mainRouter() {
         return route(GET("/slow").and(accept(TEXT_PLAIN)), mainHandler::slow)
                 .andRoute(GET("/fast").and(accept(TEXT_PLAIN)), mainHandler::fast)
-                .andRoute(GET("/").and(accept(TEXT_PLAIN)), mainHandler::hello);
+                .andRoute(GET("/").and(accept(APPLICATION_JSON)), mainHandler::hello);
     }
 
 
