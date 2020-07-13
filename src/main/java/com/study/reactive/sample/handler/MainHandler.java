@@ -20,6 +20,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -42,13 +43,10 @@ public class MainHandler {
     private Integer port;
 
 
+    // front
     public Mono<ServerResponse> hello(ServerRequest request) {
-        Mono<Code> code = codeRepository.getCode(request.queryParam("code").orElse(null))
-                .onErrorResume(e -> Mono.just(Code.builder()
-                        .code("code")
-                        .name("slow")
-                        .build())
-                );
+        String scode = request.queryParam("code").orElse(null);
+        Mono<Code> code = codeRepository.findById(scode);
         return ServerResponse.ok().body(request(code), String.class);
     }
 
