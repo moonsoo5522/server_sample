@@ -1,7 +1,10 @@
 package com.study.reactive.sample.service;
 
+import com.study.reactive.sample.model.Metrics;
+import com.study.reactive.sample.repository.MetricsRepository;
 import com.study.reactive.sample.repository.MonitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,11 @@ import java.util.Map;
 public class MonitorService {
 
     @Autowired
+    @Qualifier("ESMonitorRepository")
     private MonitorRepository monitorRepository;
+
+    @Autowired
+    private MetricsRepository metricsRepository;
 
     @PostConstruct
     public void postConstruct() {
@@ -35,26 +42,11 @@ public class MonitorService {
 
     // @Scheduled(fixedDelay = 1000)
     private void process() {
-        Mono<Map> r1 = WebClient.create("http://localhost:5000/actuator/metrics/process.cpu.usage")
-                .get()
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .flatMap(d -> d.bodyToMono(Map.class))
-                .subscribeOn(Schedulers.boundedElastic());
+        Mono<Metrics> cpuUsage = metricsRepository.getCpuUsage();
+        Mono<Metrics> jvmMemoryUsage = metricsRepository.getJvmMemoryUsage();
 
-        Mono<Map> r2 = WebClient.create("http://localhost:5000/actuator/metrics/jvm.memory.used")
-                .get()
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .flatMap(d -> d.bodyToMono(Map.class))
-                .subscribeOn(Schedulers.boundedElastic());
-
-        Flux.merge(r1, r2).subscribe(res -> {
-            List<Map<String, Object>> measureList = (List<Map<String, Object>>)res.get("measurements");
-            String name = (String) res.get("name");
-            double cpuRate = (Double)measureList.get(0).get("value");
-
-            monitorRepository.sendLog(name + " : " + cpuRate);
+        Flux.merge(cpuUsage, jvmMemoryUsage).subscribe(res -> {
+            monitorRepository.sendLog(res);
         });
     }
 }

@@ -5,7 +5,9 @@ import com.study.reactive.sample.handler.MainHandler;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
+import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +57,13 @@ public class WebConfig extends DelegatingWebFluxConfiguration {
     @Bean
     public RestTemplateBuilder restTemplateBuilder() {
         return new RestTemplateBuilder();
+    }
+
+    @Bean
+    public RestHighLevelClient restHighLevelClient(){
+        RestClientBuilder builder =RestClient.builder(new HttpHost("localhost", 9200, "http")).setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder);
+
+        return new RestHighLevelClient(builder);
     }
 
 }
