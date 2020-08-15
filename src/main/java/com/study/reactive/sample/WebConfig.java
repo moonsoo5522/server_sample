@@ -16,6 +16,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.elasticsearch.repository.config.EnableReactiveElasticsearchRepositories;
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.config.DelegatingWebFluxConfiguration;
@@ -35,6 +36,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 
 @EnableWebFlux
 @EnableR2dbcRepositories(basePackages = "com.study.reactive.sample.repository")
+@EnableReactiveElasticsearchRepositories
 @Configuration
 public class WebConfig extends DelegatingWebFluxConfiguration {
 

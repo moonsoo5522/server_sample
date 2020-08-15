@@ -3,6 +3,7 @@ package com.study.reactive.sample.service;
 import com.study.reactive.sample.model.Metrics;
 import com.study.reactive.sample.repository.MetricsRepository;
 import com.study.reactive.sample.repository.MonitorRepository;
+import com.study.reactive.sample.repository.ReactiveMonitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
@@ -31,22 +32,30 @@ public class MonitorService {
     @Autowired
     private MetricsRepository metricsRepository;
 
+    @Autowired
+    private ReactiveMonitorRepository reactiveMonitorRepository;
+
     @PostConstruct
     public void postConstruct() {
         Flux.interval(Duration.ofSeconds(2))
-                .map(d -> {
-                    process();
-                    return d + 1;
-                }).log().subscribe();
+                .flatMap(d -> {
+                    // returns flux object
+                    return process();
+                }).subscribe();
     }
 
     // @Scheduled(fixedDelay = 1000)
-    private void process() {
+    private Flux<Metrics> process() {
         Mono<Metrics> cpuUsage = metricsRepository.getCpuUsage();
         Mono<Metrics> jvmMemoryUsage = metricsRepository.getJvmMemoryUsage();
 
-        Flux.merge(cpuUsage, jvmMemoryUsage).subscribe(res -> {
-            monitorRepository.sendLog(res);
-        });
+        return Flux.merge(cpuUsage, jvmMemoryUsage)
+                .flatMap(metrics -> reactiveMonitorRepository.save(metrics))
+                .log();
+    }
+
+    public Flux<Metrics> getMetricsList(int limit) {
+        return null;
     }
 }
+

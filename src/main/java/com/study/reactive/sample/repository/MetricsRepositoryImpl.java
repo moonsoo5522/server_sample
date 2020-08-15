@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class MetricsRepositoryImpl implements MetricsRepository {
                     List<Map<String, Object>> measureList = (List<Map<String, Object>>)res.get("measurements");
                     String name = (String) res.get("name");
                     double cpuRate = (Double)measureList.get(0).get("value");
-                    return new Metrics(name, cpuRate);
+                    return new Metrics(name, cpuRate, new Date());
                 })
                 .subscribeOn(Schedulers.boundedElastic());
     }
@@ -39,7 +40,7 @@ public class MetricsRepositoryImpl implements MetricsRepository {
                     List<Map<String, Object>> measureList = (List<Map<String, Object>>)res.get("measurements");
                     String name = (String) res.get("name");
                     double cpuRate = (Double)measureList.get(0).get("value");
-                    return new Metrics(name, cpuRate);
+                    return new Metrics(name, cpuRate, new Date());
                 })
                 .subscribeOn(Schedulers.boundedElastic());
     }
