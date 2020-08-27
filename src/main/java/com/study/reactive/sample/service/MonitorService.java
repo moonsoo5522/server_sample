@@ -38,10 +38,9 @@ public class MonitorService {
     @PostConstruct
     public void postConstruct() {
         Flux.interval(Duration.ofSeconds(2))
-                .flatMap(d -> {
-                    // returns flux object
-                    return process();
-                }).subscribe();
+                .log()
+                .flatMap(d -> process())
+                .subscribe(r -> System.out.println("sub: " + Thread.currentThread().getName()));
     }
 
     // @Scheduled(fixedDelay = 1000)
@@ -50,8 +49,7 @@ public class MonitorService {
         Mono<Metrics> jvmMemoryUsage = metricsRepository.getJvmMemoryUsage();
 
         return Flux.merge(cpuUsage, jvmMemoryUsage)
-                .flatMap(metrics -> reactiveMonitorRepository.save(metrics))
-                .log();
+                .flatMap(metrics -> reactiveMonitorRepository.save(metrics));
     }
 
     public Flux<Metrics> getMetricsList(int limit) {

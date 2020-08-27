@@ -25,8 +25,7 @@ public class MetricsRepositoryImpl implements MetricsRepository {
                     String name = (String) res.get("name");
                     double cpuRate = (Double)measureList.get(0).get("value");
                     return new Metrics(name, cpuRate, new Date());
-                })
-                .subscribeOn(Schedulers.boundedElastic());
+                });
     }
 
     @Override

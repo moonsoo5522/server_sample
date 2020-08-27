@@ -34,22 +34,10 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RequestPredicates.contentType;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
-@EnableWebFlux
 @EnableR2dbcRepositories(basePackages = "com.study.reactive.sample.repository")
 @EnableReactiveElasticsearchRepositories
 @Configuration
 public class WebConfig extends DelegatingWebFluxConfiguration {
-
-    @Autowired
-    private MainHandler mainHandler;
-
-    @Bean
-    public RouterFunction<?> mainRouter() {
-        return route(GET("/slow").and(accept(TEXT_PLAIN)), mainHandler::slow)
-                .andRoute(GET("/fast").and(accept(TEXT_PLAIN)), mainHandler::fast)
-                .andRoute(GET("/").and(accept(APPLICATION_JSON)), mainHandler::hello);
-    }
-
 
     @Bean
     public WebClientCustomizer webClientCustomizer() {
