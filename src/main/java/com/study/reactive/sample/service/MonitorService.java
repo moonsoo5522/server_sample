@@ -43,8 +43,7 @@ public class MonitorService {
                 .subscribe(r -> System.out.println("sub: " + Thread.currentThread().getName()));
     }
 
-    // @Scheduled(fixedDelay = 1000)
-    private Flux<Metrics> process() {
+    Flux<Metrics> process() {
         Mono<Metrics> cpuUsage = metricsRepository.getCpuUsage();
         Mono<Metrics> jvmMemoryUsage = metricsRepository.getJvmMemoryUsage();
 
